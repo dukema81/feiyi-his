@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>飞育教育管理系统 · 离线演示</title>
+<style>
+/* 飞育教育管理系统 · 样式 */
+:root {
+  --pri: #2563eb;
+  --pri-d: #16389f;
+  --bg: #f4f6fb;
+  --card: #fff;
+  --line: #e3e8f2;
+  --txt: #1a2333;
+  --sub: #7684a0;
+  --ok: #2563eb;
+  --warn: #d99b0b;
+  --err: #cf2f4b;
+  --side: #101a33;
+  --side-2: #1b2b52;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font: 14px/1.6 -apple-system, "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+  color: var(--txt);
+  background: var(--bg);
+  overflow-x: hidden;
+}
+a { color: var(--pri); text-decoration: none; }
+
+/* ---------- 侧边栏 ---------- */
+#sidebar {
+  position: fixed; left: 0; top: 0; bottom: 0; width: 200px;
+  background: var(--side); color: #c5cfdf; display: flex; flex-direction: column;
+  z-index: 20;
+}
+.brand {
+  padding: 18px 18px 4px; font-size: 18px; font-weight: 700; color: #fff;
+  letter-spacing: 1px;
+}
+.brand-sub { padding: 0 18px 14px; font-size: 11.5px; color: #7d8aa5; }
+#nav { flex: 1; overflow-y: auto; padding: 4px 8px; }
+#nav a {
+  display: flex; align-items: center; gap: 9px; padding: 8px 10px; margin: 1px 0;
+  color: #b9c5da; border-radius: 7px; font-size: 13.5px; position: relative;
+}
+#nav a .ic { width: 18px; text-align: center; font-size: 14px; }
+#nav a:hover { background: var(--side-2); color: #fff; }
+#nav a.on { background: var(--pri); color: #fff; }
+#nav a .badge {
+  margin-left: auto; background: var(--err); color: #fff; font-size: 11px;
+  min-width: 18px; height: 18px; line-height: 18px; text-align: center;
+  border-radius: 9px; padding: 0 5px; font-weight: 600;
+}
+#nav a.on .badge { background: rgba(255,255,255,.28); }
+.side-foot {
+  padding: 12px 14px; border-top: 1px solid rgba(255,255,255,.08);
+  font-size: 12px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.side-foot span { color: #8ba3a6; flex: 1; min-width: 80px; }
+
+/* ---------- 主区 ---------- */
+#main {
+  margin-left: 200px; padding: 20px 24px 48px; min-height: 100vh;
+}
+h2.page { font-size: 19px; margin: 0 0 4px; font-weight: 650; }
+.page-desc { color: var(--sub); font-size: 12.5px; margin-bottom: 14px; }
+
+/* ---------- 卡片 ---------- */
+.card {
+  background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+  padding: 16px 18px; margin-bottom: 14px;
+}
+.card h3 {
+  margin: 0 0 12px; font-size: 14.5px; font-weight: 650; display: flex;
+  align-items: center; gap: 8px;
+}
+.card h3 .sub { font-weight: 400; font-size: 12px; color: var(--sub); margin-left: auto; }
+
+/* ---------- KPI ---------- */
+.kpis { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+.kpi {
+  background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+  padding: 14px 18px; min-width: 130px; flex: 1;
+}
+.kpi b { display: block; font-size: 23px; font-weight: 700; line-height: 1.25; }
+.kpi span { font-size: 12.5px; color: var(--sub); }
+.kpi.ok b { color: var(--ok); }
+.kpi.warn b { color: var(--warn); }
+.kpi.err b { color: var(--err); }
+.kpi.pri b { color: var(--pri); }
+
+/* ---------- 工具条 ---------- */
+.toolbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+.btn {
+  border: 0; background: var(--pri); color: #fff; padding: 7px 14px;
+  border-radius: 7px; font-size: 13px; cursor: pointer; font-family: inherit;
+  transition: background .15s;
+}
+.btn:hover { background: var(--pri-d); }
+.btn:disabled { opacity: .55; cursor: not-allowed; }
+.btn.ghost { background: #eaf0f1; color: var(--txt); }
+.btn.ghost:hover { background: #dfe8e9; }
+.btn.danger { background: var(--err); }
+.btn.ok { background: var(--ok); }
+.btn.sm { padding: 4px 10px; font-size: 12px; }
+
+input, select, textarea {
+  font-family: inherit; font-size: 13px; padding: 7px 10px;
+  border: 1px solid var(--line); border-radius: 7px; background: #fff;
+  color: var(--txt); outline: none; max-width: 100%;
+}
+input:focus, select:focus, textarea:focus { border-color: var(--pri); }
+textarea { resize: vertical; min-height: 84px; width: 100%; }
+
+/* ---------- 表格 ---------- */
+.tw { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th, td {
+  text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+th { color: var(--sub); font-weight: 600; font-size: 12.5px; background: #f9fbfb; }
+tbody tr:hover { background: #f6faf9; }
+tr.click { cursor: pointer; }
+td.wrap { white-space: normal; min-width: 180px; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+.tag {
+  display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 12px;
+  background: #eaf0f1; color: var(--sub);
+}
+.tag.ok { background: #e6f7ec; color: var(--ok); }
+.tag.warn { background: #fff5e0; color: var(--warn); }
+.tag.err { background: #fdedf0; color: var(--err); }
+.tag.pri { background: #e3f4f2; color: var(--pri); }
+
+.empty { color: var(--sub); text-align: center; padding: 44px 12px; font-size: 13px; }
+
+/* ---------- 表单 ---------- */
+.fld { display: block; margin-bottom: 12px; }
+.fld > span { display: block; font-size: 12.5px; color: var(--sub); margin-bottom: 5px; }
+.fld input, .fld select, .fld textarea { width: 100%; }
+.fld i { display: block; font-size: 11.5px; color: var(--sub); font-style: normal; margin-top: 3px; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 14px; }
+.grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 14px; }
+
+/* ---------- 进度条 ---------- */
+.bar { background: #eaf0f1; border-radius: 5px; height: 9px; overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--pri); border-radius: 5px; }
+.bar i.warn { background: var(--warn); }
+.bar i.err { background: var(--err); }
+.bar i.ok { background: var(--ok); }
+
+/* ---------- 竖向柱状图 ---------- */
+.chart { display: flex; align-items: flex-end; gap: 10px; height: 190px; padding: 6px 0 0; }
+.chart .col { flex: 1; display: flex; flex-direction: column; justify-content: flex-end;
+  align-items: center; gap: 4px; min-width: 0; }
+.chart .col .bars { display: flex; gap: 3px; align-items: flex-end; height: 150px; }
+.chart .col .bars i { width: 14px; border-radius: 3px 3px 0 0; background: var(--pri);
+  display: block; min-height: 2px; }
+.chart .col .bars i.b2 { background: #9ecfc9; }
+.chart .col .lb { font-size: 11.5px; color: var(--sub); white-space: nowrap; }
+.chart .col .vv { font-size: 11px; color: var(--txt); }
+
+/* ---------- 横向条形排行 ---------- */
+.rank { display: flex; flex-direction: column; gap: 9px; }
+.rank .r { display: flex; align-items: center; gap: 10px; font-size: 12.5px; }
+.rank .r .n { width: 128px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rank .r .b { flex: 1; }
+.rank .r .v { width: 96px; text-align: right; color: var(--sub);
+  font-variant-numeric: tabular-nums; }
+
+/* ---------- 时间线 ---------- */
+.tl { position: relative; padding-left: 22px; }
+.tl:before {
+  content: ''; position: absolute; left: 6px; top: 6px; bottom: 6px;
+  width: 2px; background: var(--line);
+}
+.tl-item { position: relative; padding: 0 0 16px; }
+.tl-item:before {
+  content: ''; position: absolute; left: -20px; top: 5px; width: 10px; height: 10px;
+  border-radius: 50%; background: #fff; border: 2px solid var(--pri);
+}
+.tl-item.pass:before { border-color: var(--ok); }
+.tl-item.reject:before { border-color: var(--err); }
+.tl-item .t { font-size: 11.5px; color: var(--sub); }
+.tl-item .h { font-weight: 600; font-size: 13.5px; margin: 1px 0; }
+.tl-item .d { color: var(--sub); font-size: 12.5px; }
+
+/* ---------- 风险卡片 ---------- */
+.risk-list { display: flex; flex-direction: column; gap: 10px; }
+.risk-item {
+  background: var(--card); border: 1px solid var(--line); border-left: 3px solid var(--warn);
+  border-radius: 9px; padding: 12px 16px;
+}
+.risk-item.lv-hi { border-left-color: var(--err); }
+.risk-item.lv-mid { border-left-color: var(--warn); }
+.risk-item.lv-lo { border-left-color: #9ecfc9; }
+.risk-item .h { display: flex; align-items: center; gap: 8px; }
+.risk-item .h b { font-size: 13.5px; }
+.risk-item .d { color: var(--sub); font-size: 12.5px; margin: 4px 0 0; }
+
+/* ---------- 税率卡 ---------- */
+.rate-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.rate-card {
+  border: 1px solid var(--line); border-radius: 9px; padding: 12px 14px; background: #fff;
+}
+.rate-card b { display: block; font-size: 20px; color: var(--pri); }
+.rate-card span { font-size: 12px; color: var(--sub); }
+
+/* ---------- 弹层 ---------- */
+.modal-mask {
+  position: fixed; inset: 0; background: rgba(15, 28, 30, .45); z-index: 60;
+  display: flex; align-items: flex-start; justify-content: center; padding: 40px 16px;
+  overflow-y: auto;
+}
+.modal {
+  background: #fff; border-radius: 12px; padding: 20px 22px; width: 520px;
+  max-width: 100%; box-shadow: 0 16px 48px rgba(0,0,0,.22);
+}
+.modal.wide { width: 800px; }
+.modal h3 { margin: 0 0 14px; font-size: 16px; }
+.modal .acts { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
+.hidden { display: none !important; }
+
+.toast {
+  position: fixed; left: 50%; bottom: 40px; transform: translateX(-50%);
+  background: #1a2333; color: #fff; padding: 10px 20px; border-radius: 8px;
+  font-size: 13px; z-index: 90; box-shadow: 0 8px 24px rgba(0,0,0,.2);
+  max-width: 80vw;
+}
+
+/* ---------- 结算卡 ---------- */
+.settle {
+  background: linear-gradient(135deg, #1d4ed8, #3b82f6); color: #fff;
+  border-radius: 10px; padding: 16px 20px; margin-bottom: 14px;
+}
+.settle .row { display: flex; gap: 26px; flex-wrap: wrap; }
+.settle .row > div b { display: block; font-size: 21px; font-weight: 700; }
+.settle .row > div span { font-size: 12px; opacity: .82; }
+.settle .note { margin-top: 10px; font-size: 12px; opacity: .85; }
+
+/* ---------- 登录页 ---------- */
+.login-wrap {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, #101a33 0%, #1e3a8a 52%, #1d4ed8 130%);
+  padding: 20px;
+}
+.login-box {
+  background: #fff; border-radius: 14px; padding: 34px 32px; width: 372px;
+  max-width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,.3);
+}
+.login-box h1 { font-size: 21px; margin: 0 0 4px; }
+.login-box p { color: var(--sub); font-size: 12.5px; margin: 0 0 22px; }
+.login-box input { width: 100%; margin-bottom: 12px; padding: 10px 12px; }
+.login-box .btn { width: 100%; padding: 10px; font-size: 14px; margin-top: 6px; }
+.hint { font-size: 11.5px; color: var(--sub); text-align: center; margin-top: 14px;
+  line-height: 1.8; }
+
+/* ---------- 移动端 ---------- */
+@media (max-width: 820px) {
+  #sidebar {
+    position: static; width: auto; flex-direction: row; align-items: center;
+    overflow-x: auto; padding: 0 8px;
+  }
+  .brand { padding: 10px 8px; font-size: 15px; white-space: nowrap; }
+  .brand-sub { display: none; }
+  #nav { display: flex; padding: 6px 0; flex: 1; }
+  #nav a { white-space: nowrap; padding: 6px 10px; }
+  #nav a .ic { display: none; }
+  .side-foot { border: 0; padding: 6px; }
+  .side-foot span { display: none; }
+  #main { margin-left: 0; padding: 14px 12px 40px; }
+  .grid2, .grid3 { grid-template-columns: 1fr; }
+  .kpi b { font-size: 20px; }
+  .chart { height: 160px; }
+  .chart .col .bars { height: 120px; }
+}
+
+/* ---------- 飞育扩展 ---------- */
+.sub-cell { font-size: 12px; color: var(--sub); max-width: 280px; white-space: normal; }
+.rowitem { padding: 8px 4px; border-bottom: 1px dashed var(--line); display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; }
+.rowitem.hot b { color: var(--err); }
+.rowitem i { margin-left: auto; font-style: normal; font-size: 11.5px; color: var(--sub); }
+.rowitem p { width: 100%; margin: 2px 0 0; font-size: 12.5px; color: var(--sub); }
+table.week th { text-align: center; padding: 6px 4px; font-size: 12.5px; }
+table.week td { border: 1px solid var(--line); padding: 3px; vertical-align: top; height: 46px; }
+.slot b { display: block; font-size: 12px; color: var(--pri); }
+.slot i { font-style: normal; font-size: 11px; color: var(--sub); }
+.card.hot { border-color: #f3c1cb; background: #fff7f8; }
+select, input[type=number] { margin-left: 6px; }
+
+
+.demo-bar{position:fixed;left:0;right:0;top:0;z-index:99;background:#fff8e6;color:#7a5b12;
+  border-bottom:1px solid #f0d9a8;font-size:12.5px;padding:7px 16px;text-align:center;
+  box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.demo-bar b{color:#b8791b}
+.demo-bar .who{margin-left:12px;padding-left:12px;border-left:1px solid #f0d9a8}
+.demo-bar select{font-size:12.5px;padding:2px 6px;border:1px solid #e0c98f;border-radius:4px;
+  background:#fff;color:#7a5b12}
+body{padding-top:34px}
+
+</style>
+</head>
+<body>
+  <div id="sidebar">
+    <div class="brand">🗂️ 飞效OA</div>
+    <div class="brand-sub">学籍 · 成绩 · 考勤 · 缴费</div>
+    <nav id="nav"></nav>
+    <div class="side-foot">
+      <span id="who"></span>
+      <button id="btn-logout" class="btn ghost sm">退出</button>
+    </div>
+  </div>
+  <main id="main"><div class="empty">加载中…</div></main>
+  <div id="modal-mask" class="modal-mask hidden"><div id="modal" class="modal"></div></div>
+  <div id="toast" class="toast hidden"></div>
+<script>var PREFIX = '';</script>
+<script>
+
+/* ============ 离线演示运行时：拦截 fetch 改读快照 ============ */
+var SNAP = {"/api/me":{"user":{"id":1,"username":"admin","name":"系统管理员","role":"admin"},"perms":"*"},"/api/dashboard":{"date":"2026-10-23","registrations":2,"consulted":1,"prescriptions":1,"income_cents":3289,"pending_dispense":0,"waiting":1,"low_stock":2,"near_expiry":1,"open_risks":0},"/api/notices":{"items":[{"id":2,"title":"药品调价通知","content":"氨氯地平片价格调整，请药房留意。","level":"warn","created_at":"2026-10-23 16:07:34"},{"id":1,"title":"系统上线公告","content":"飞医HIS v1.0 正式上线，请各科室及时熟悉系统。","level":"info","created_at":"2026-10-23 16:07:34"}],"total":2,"page":1,"size":20},"/api/registrations/queue":{"items":[{"id":2,"no":"GH20261023-902","patient_id":1,"schedule_id":1,"doctor_id":1,"dept_id":1,"fee_cents":3000,"status":"waiting","no_in_queue":2,"paid":0,"created_at":"2026-10-23 16:07:34","patient_name":"张三","doctor_name":"李大伟"}],"total":1,"waiting":1},"/api/users":{"items":[{"id":1,"username":"admin","name":"系统管理员","role":"admin","phone":"","status":1,"created_at":"2026-10-23 16:07:34"},{"id":2,"username":"lidw","name":"李大伟","role":"doctor","phone":"13800000001","status":1,"created_at":"2026-10-23 16:07:34"},{"id":3,"username":"zhangm","name":"张敏","role":"doctor","phone":"13800000002","status":1,"created_at":"2026-10-23 16:07:34"},{"id":4,"username":"wangn","name":"王楠","role":"nurse","phone":"13800000003","status":1,"created_at":"2026-10-23 16:07:34"},{"id":5,"username":"chenyf","name":"陈亚芳","role":"pharmacist","phone":"13800000004","status":1,"created_at":"2026-10-23 16:07:34"},{"id":6,"username":"liug","name":"刘刚","role":"cashier","phone":"13800000005","status":1,"created_at":"2026-10-23 16:07:34"},{"id":7,"username":"zhaock","name":"赵仓储","role":"warehouse","phone":"13800000006","status":1,"created_at":"2026-10-23 16:07:34"},{"id":8,"username":"reader01","name":"只读用户","role":"reader","phone":"","status":1,"created_at":"2026-10-23 16:07:34"}],"total":8,"page":1,"size":20},"/api/api-keys":{"items":[],"total":0,"page":1,"size":20},"/api/patients":{"items":[{"id":6,"mrn":"P0006","name":"孙八","gender":"F","birth":"2001-04-15","phone":"13912123434","allergy":"乳胶过敏","insurance_type":"self","insurance_no":"","created_at":"2026-10-23 16:07:34"},{"id":5,"mrn":"P0005","name":"钱七","gender":"M","birth":"1978-12-01","phone":"13999990000","allergy":"","insurance_type":"resident","insurance_no":"BJ2024RES005","created_at":"2026-10-23 16:07:34"},{"id":4,"mrn":"P0004","name":"赵六","gender":"F","birth":"2015-08-19","phone":"13977778888","allergy":"","insurance_type":"self","insurance_no":"","created_at":"2026-10-23 16:07:34"},{"id":3,"mrn":"P0003","name":"王五","gender":"M","birth":"1965-02-28","phone":"13955556666","allergy":"磺胺类过敏","insurance_type":"employee","insurance_no":"BJ2024EMP003","created_at":"2026-10-23 16:07:34"},{"id":2,"mrn":"P0002","name":"李四","gender":"F","birth":"1992-11-03","phone":"13933334444","allergy":"","insurance_type":"resident","insurance_no":"BJ2024RES002","created_at":"2026-10-23 16:07:34"},{"id":1,"mrn":"P0001","name":"张三","gender":"M","birth":"1980-05-12","phone":"13911112222","allergy":"青霉素过敏","insurance_type":"employee","insurance_no":"BJ2024EMP001","created_at":"2026-10-23 16:07:34"}],"total":6,"page":1,"size":20},"/api/patients/1/visits":{"items":[{"id":2,"no":"GH20261023-902","patient_id":1,"schedule_id":1,"doctor_id":1,"dept_id":1,"fee_cents":3000,"status":"waiting","no_in_queue":2,"paid":0,"created_at":"2026-10-23 16:07:34","record":null,"prescriptions":[]}],"total":1},"/api/patients?keyword=张":null,"/api/doctors":{"items":[{"id":1,"name":"李大伟","dept_id":1,"title":"主任医师","fee_cents":3000,"specialty":"心血管疾病","status":"active","created_at":"2026-10-23 16:07:34","dept_name":"内科"},{"id":2,"name":"张敏","dept_id":1,"title":"副主任医师","fee_cents":2500,"specialty":"呼吸系统","status":"active","created_at":"2026-10-23 16:07:34","dept_name":"内科"},{"id":3,"name":"王强","dept_id":2,"title":"主治医师","fee_cents":1800,"specialty":"普外科","status":"active","created_at":"2026-10-23 16:07:34","dept_name":"外科"},{"id":4,"name":"刘慧","dept_id":3,"title":"副主任医师","fee_cents":2200,"specialty":"儿科常见病","status":"active","created_at":"2026-10-23 16:07:34","dept_name":"儿科"},{"id":5,"name":"陈志","dept_id":2,"title":"主任医师","fee_cents":3500,"specialty":"骨科","status":"active","created_at":"2026-10-23 16:07:34","dept_name":"外科"}],"total":5,"page":1,"size":20},"/api/departments":{"items":[{"id":1,"name":"内科","location":"门诊楼2层201-206","remark":"心血管/呼吸/消化","status":"active","created_at":"2026-10-23 16:07:34"},{"id":2,"name":"外科","location":"门诊楼2层210-215","remark":"普外/骨科","status":"active","created_at":"2026-10-23 16:07:34"},{"id":3,"name":"儿科","location":"门诊楼3层301-305","remark":"儿童保健","status":"active","created_at":"2026-10-23 16:07:34"},{"id":4,"name":"检验科","location":"医技楼1层","remark":"血常规/生化","status":"active","created_at":"2026-10-23 16:07:34"},{"id":5,"name":"药剂科","location":"门诊楼1层","remark":"药房/药库","status":"active","created_at":"2026-10-23 16:07:34"}],"total":5,"page":1,"size":20},"/api/schedules":{"items":[{"id":1,"doctor_id":1,"sched_date":"2026-10-23","period":"AM","quota":20,"booked":2,"status":"open","created_at":"2026-10-23 16:07:34","doctor_name":"李大伟","doctor_title":"主任医师"},{"id":7,"doctor_id":3,"sched_date":"2026-10-23","period":"AM","quota":20,"booked":0,"status":"open","created_at":"2026-10-23 16:07:34","doctor_name":"王强","doctor_title":"主治医师"},{"id":13,"doctor_id":5,"sched_date":"2026-10-23","period":"AM","quota":20,"booked":0,"status":"open","created_at":"2026-10-23 16:07:34","doctor_name":"陈志","doctor_title":"主任医师"},{"id":4,"doctor_id":2,"sched_date":"2026-10-23","period":"PM","quota":20,"booked":0,"status":"open","created_at":"2026-10-23 16:07:34","doctor_name":"张敏","doctor_title":"副主任医师"},{"id":10,"doctor_id":4,"sched_date":"2026-10-23","period":"PM","quota":20,"booked":0,"status":"open","created_at":"2026-10-23 16:07:34","doctor_name":"刘慧","doctor_title":"副主任医师"},{"id":2,"doctor_id":1,"sched_date":"2026-10-24","period":"AM","quota":20,"booked":0,"status":"open","created_at":"2026-10-23 16:07:34","doctor_name":"李大伟","doctor_title":"主任医师"},{"id":8,"doctor_id":3,"sched_date":"2026-10-24","period":"AM","quota":20,"booked":0,"status":"open","created_at":"2026-10-23 16:07:34","doctor_name":"王强","doctor_title":"主治医师"},{"id":14,"doctor_id":5,"sched_date":"2026-10-24","period":"AM","quota":20,"booked":0,"status":"open","created_at":"2026-10-23 16:07:34","doctor_name":"陈志","doctor_title":"主任医师"},{"id":5,"doctor_id":2,"sched_date":"2026-10-24","period":"PM","quota":20,"booked":0,"status":"open","created_at":"2026-10-23 16:07:34","doctor_name":"张敏","doctor_title":"副主任医师"},{"id":11,"doctor_id":4,"sched_date":"2026-10-24","period":"PM","quota":20,"booked":0,"status":"open","created_at":"2026-10-23 16:07:34","doctor_name":"刘慧","doctor_title":"副主任医师"},{"id":3,"doctor_id":1,"sched_date":"2026-10-25","period":"AM","quota":20,"booked":0,"status":"open","created_at":"2026-10-23 16:07:34","doctor_name":"李大伟","doctor_title":"主任医师"},{"id":9,"doctor_id":3,"sched_date":"2026-10-25","period":"AM","quota":20,"booked":0,"status":"open","created_at":"2026-10-23 16:07:34","doctor_name":"王强","doctor_title":"主治医师"},{"id":15,"doctor_id":5,"sched_date":"2026-10-25","period":"AM","quota":20,"booked":0,"status":"open","created_at":"2026-10-23 16:07:34","doctor_name":"陈志","doctor_title":"主任医师"},{"id":6,"doctor_id":2,"sched_date":"2026-10-25","period":"PM","quota":20,"booked":0,"status":"open","created_at":"2026-10-23 16:07:34","doctor_name":"张敏","doctor_title":"副主任医师"},{"id":12,"doctor_id":4,"sched_date":"2026-10-25","period":"PM","quota":20,"booked":0,"status":"open","created_at":"2026-10-23 16:07:34","doctor_name":"刘慧","doctor_title":"副主任医师"}],"total":15,"page":1,"size":20},"/api/schedules?doctor_id=1":{"items":[{"id":1,"doctor_id":1,"sched_date":"2026-10-23","period":"AM","quota":20,"booked":2,"status":"open","created_at":"2026-10-23 16:07:34","doctor_name":"李大伟","doctor_title":"主任医师"},{"id":2,"doctor_id":1,"sched_date":"2026-10-24","period":"AM","quota":20,"booked":0,"status":"open","created_at":"2026-10-23 16:07:34","doctor_name":"李大伟","doctor_title":"主任医师"},{"id":3,"doctor_id":1,"sched_date":"2026-10-25","period":"AM","quota":20,"booked":0,"status":"open","created_at":"2026-10-23 16:07:34","doctor_name":"李大伟","doctor_title":"主任医师"}],"total":3,"page":1,"size":20},"/api/registrations":{"items":[{"id":2,"no":"GH20261023-902","patient_id":1,"schedule_id":1,"doctor_id":1,"dept_id":1,"fee_cents":3000,"status":"waiting","no_in_queue":2,"paid":0,"created_at":"2026-10-23 16:07:34"},{"id":1,"no":"GH20261023-901","patient_id":2,"schedule_id":1,"doctor_id":1,"dept_id":1,"fee_cents":3000,"status":"done","no_in_queue":1,"paid":1,"created_at":"2026-10-23 16:07:34"}],"total":2,"page":1,"size":20},"/api/registrations?status=waiting":{"items":[{"id":2,"no":"GH20261023-902","patient_id":1,"schedule_id":1,"doctor_id":1,"dept_id":1,"fee_cents":3000,"status":"waiting","no_in_queue":2,"paid":0,"created_at":"2026-10-23 16:07:34"}],"total":1,"page":1,"size":20},"/api/registrations?status=done":{"items":[{"id":1,"no":"GH20261023-901","patient_id":2,"schedule_id":1,"doctor_id":1,"dept_id":1,"fee_cents":3000,"status":"done","no_in_queue":1,"paid":1,"created_at":"2026-10-23 16:07:34"}],"total":1,"page":1,"size":20},"/api/registrations/1":{"id":1,"no":"GH20261023-901","patient_id":2,"schedule_id":1,"doctor_id":1,"dept_id":1,"fee_cents":3000,"status":"done","no_in_queue":1,"paid":1,"created_at":"2026-10-23 16:07:34","patient":{"name":"李四","phone":"13933334444","mrn":"P0002"},"doctor_name":"李大伟","dept_name":"内科"},"/api/clinic-records":{"items":[{"id":1,"registration_id":1,"patient_id":2,"doctor_id":1,"chief_complaint":"咳嗽咳痰3天，伴低热","history":"既往体健，无药物过敏","diagnosis":"急性上呼吸道感染","advice":"注意休息，多饮水，一周后复诊","version":1,"created_at":"2026-10-23 16:07:34"}],"total":1,"page":1,"size":20},"/api/clinic-records?patient_id=1":{"items":[],"total":0,"page":1,"size":20},"/api/prescriptions":{"items":[{"id":1,"no":"CF20261023-901","patient_id":2,"doctor_id":1,"registration_id":1,"status":"dispensed","total_cents":5060,"version":1,"created_at":"2026-10-23 16:07:34"}],"total":1,"page":1,"size":20},"/api/prescriptions?status=submitted":{"items":[],"total":0,"page":1,"size":20},"/api/prescriptions?status=dispensed":{"items":[{"id":1,"no":"CF20261023-901","patient_id":2,"doctor_id":1,"registration_id":1,"status":"dispensed","total_cents":5060,"version":1,"created_at":"2026-10-23 16:07:34"}],"total":1,"page":1,"size":20},"/api/prescriptions/1":{"id":1,"no":"CF20261023-901","patient_id":2,"doctor_id":1,"registration_id":1,"status":"dispensed","total_cents":5060,"version":1,"created_at":"2026-10-23 16:07:34","items":[{"id":1,"prescription_id":1,"drug_id":1,"drug_name":"阿莫西林胶囊","dose":0.25,"frequency":"tid","days":3,"qty":2,"price_cents":1580,"amount_cents":3160},{"id":2,"prescription_id":1,"drug_id":5,"drug_name":"蒙脱石散","dose":3.0,"frequency":"tid","days":2,"qty":1,"price_cents":1900,"amount_cents":1900}],"patient":{"name":"李四","mrn":"P0002"},"doctor_name":"李大伟"},"/api/charges":{"items":[{"id":1,"no":"SF20261023-901","patient_id":2,"registration_id":1,"prescription_ids":"1","total_cents":5060,"discount_rate":0.65,"paid_cents":3289,"pay_method":"wechat","status":"paid","version":1,"created_at":"2026-10-23 16:07:34"}],"total":1,"page":1,"size":20},"/api/charges/1":{"id":1,"no":"SF20261023-901","patient_id":2,"registration_id":1,"prescription_ids":"1","total_cents":5060,"discount_rate":0.65,"paid_cents":3289,"pay_method":"wechat","status":"paid","version":1,"created_at":"2026-10-23 16:07:34","items":[],"patient":{"name":"李四","mrn":"P0002","insurance_type":"resident"}},"/api/transactions":{"items":[{"id":1,"ttype":"income","amount_cents":3289,"ref_type":"charge","ref_id":1,"pay_method":"wechat","note":"收费 SF20261023-901","version":1,"created_at":"2026-10-23 16:07:34"}],"total":1,"page":1,"size":20},"/api/finance/summary":{"date":"2026-10-23","income_cents":3289,"refund_cents":0,"expense_cents":0,"by_method":{"wechat":3289},"charge_count":1,"rx_count":1},"/api/pharmacy/pending":{"items":[],"total":0},"/api/pharmacy/logs":{"items":[{"id":2,"prescription_id":1,"drug_id":5,"drug_name":"蒙脱石散","qty":1,"batch_no":"B20260920","operator":"陈亚芳","created_at":"2026-10-23 16:07:34"},{"id":1,"prescription_id":1,"drug_id":1,"drug_name":"阿莫西林胶囊","qty":2,"batch_no":"B20260901","operator":"陈亚芳","created_at":"2026-10-23 16:07:34"}],"total":2,"page":1,"size":20},"/api/inventory":{"items":[{"id":3,"drug_id":3,"batch_no":"B20260815","qty":12,"expire_at":"2026-12-22","version":1,"created_at":"2026-10-23 16:07:34","drug_name":"氨氯地平片","spec":"5mg×28片","safe_stock":10},{"id":2,"drug_id":2,"batch_no":"B20261010","qty":8,"expire_at":"2027-05-11","version":1,"created_at":"2026-10-23 16:07:34","drug_name":"布洛芬缓释胶囊","spec":"0.3g×20粒","safe_stock":15},{"id":5,"drug_id":5,"batch_no":"B20260920","qty":19,"expire_at":"2027-06-30","version":1,"created_at":"2026-10-23 16:07:34","drug_name":"蒙脱石散","spec":"3g×10袋","safe_stock":10},{"id":1,"drug_id":1,"batch_no":"B20260901","qty":48,"expire_at":"2027-08-19","version":1,"created_at":"2026-10-23 16:07:34","drug_name":"阿莫西林胶囊","spec":"0.25g×24粒","safe_stock":20},{"id":4,"drug_id":4,"batch_no":"B20261101","qty":30,"expire_at":"2027-10-18","version":1,"created_at":"2026-10-23 16:07:34","drug_name":"头孢克肟颗粒","spec":"50mg×6袋","safe_stock":12},{"id":6,"drug_id":6,"batch_no":"B20270105","qty":5,"expire_at":"2027-11-27","version":1,"created_at":"2026-10-23 16:07:34","drug_name":"维生素C片","spec":"0.1g×100片","safe_stock":8}],"total":6,"page":1,"size":20},"/api/inventory/summary?drug_id=1":{"drug_id":1,"total":48,"batches":[{"batch_no":"B20260901","qty":48,"expire_at":"2027-08-19"}]},"/api/drugs":{"items":[{"id":1,"name":"阿莫西林胶囊","spec":"0.25g×24粒","unit":"盒","price_cents":1580,"max_dose":0.5,"rx_required":1,"safe_stock":20,"status":"active","created_at":"2026-10-23 16:07:34","stock":48},{"id":2,"name":"布洛芬缓释胶囊","spec":"0.3g×20粒","unit":"盒","price_cents":2200,"max_dose":0.6,"rx_required":0,"safe_stock":15,"status":"active","created_at":"2026-10-23 16:07:34","stock":8},{"id":3,"name":"氨氯地平片","spec":"5mg×28片","unit":"盒","price_cents":3200,"max_dose":0.2,"rx_required":1,"safe_stock":10,"status":"active","created_at":"2026-10-23 16:07:34","stock":12},{"id":4,"name":"头孢克肟颗粒","spec":"50mg×6袋","unit":"盒","price_cents":2680,"max_dose":0.1,"rx_required":1,"safe_stock":12,"status":"active","created_at":"2026-10-23 16:07:34","stock":30},{"id":5,"name":"蒙脱石散","spec":"3g×10袋","unit":"盒","price_cents":1900,"max_dose":0.0,"rx_required":0,"safe_stock":10,"status":"active","created_at":"2026-10-23 16:07:34","stock":19},{"id":6,"name":"维生素C片","spec":"0.1g×100片","unit":"瓶","price_cents":900,"max_dose":0.0,"rx_required":0,"safe_stock":8,"status":"active","created_at":"2026-10-23 16:07:34","stock":5}],"total":6,"page":1,"size":20},"/api/drugs/1":{"id":1,"name":"阿莫西林胶囊","spec":"0.25g×24粒","unit":"盒","price_cents":1580,"max_dose":0.5,"rx_required":1,"safe_stock":20,"status":"active","created_at":"2026-10-23 16:07:34","batches":[{"id":1,"drug_id":1,"batch_no":"B20260901","qty":48,"expire_at":"2027-08-19","version":1,"created_at":"2026-10-23 16:07:34"}]},"/api/purchases":{"items":[],"total":0,"page":1,"size":20},"/api/purchases/1":null,"/api/suppliers":{"items":[{"id":1,"name":"国药控股北京分公司","contact":"孙经理","phone":"010-88886666","credit_days":30,"payable_cents":0,"created_at":"2026-10-23 16:07:34"},{"id":2,"name":"华北制药直销处","contact":"马经理","phone":"0311-66889900","credit_days":45,"payable_cents":0,"created_at":"2026-10-23 16:07:34"}],"total":2,"page":1,"size":20},"/api/risks":{"items":[],"total":0,"page":1,"size":20},"/api/risks?status=open":{"items":[],"total":0,"page":1,"size":20},"/api/rules":{"items":[{"id":1,"name":"insurance_rates","value":"{\"employee\":0.85,\"resident\":0.65,\"self\":1.0}","updated_at":null},{"id":2,"name":"expiry_warn_days","value":"90","updated_at":null}]},"/api/logs":{"items":[{"id":1,"ts":"2026-10-23 16:07:34","user_id":1,"action":"login","detail":"admin","ip":null}],"total":1,"page":1,"size":20},"/api/sync?since=0&entities=patients":{"version":0,"since":0,"changes":[]}};
+var DEMO_USERS = {"admin":{"user":{"id":1,"username":"admin","name":"系统管理员","role":"admin"},"perms":["*"]},"lidw":{"user":{"id":2,"username":"lidw","name":"李大伟","role":"doctor"},"perms":["his.patients.*","his.clinic.*","his.prescriptions.*","his.registrations.read"]},"liug":{"user":{"id":6,"username":"liug","name":"刘刚","role":"cashier"},"perms":["his.charges.*","his.patients.read","his.registrations.read","his.transactions.read"]},"reader01":{"user":{"id":8,"username":"reader01","name":"只读用户","role":"reader"},"perms":["his.patients.read","his.registrations.read","his.prescriptions.read","his.charges.read","his.inventory.read","his.schedules.read"]}};
+var DEMO_ME = (function () {
+  var q = (location.search || '') + '&' + (location.hash || '');
+  var m = q.match(/[?&#]as=([\w\-]+)/);
+  var who = m ? decodeURIComponent(m[1]) : '';
+  if (who && DEMO_USERS[who]) return DEMO_USERS[who];
+  try {
+    var saved = sessionStorage.getItem('demo_as');
+    if (saved && DEMO_USERS[saved]) return DEMO_USERS[saved];
+  } catch (e) { /* ignore */ }
+  return {"user":{"id":1,"username":"admin","name":"系统管理员","role":"admin"},"perms":["*"]};
+})();
+
+function normPath(p) {
+  p = String(p || '').replace(PREFIX, '');
+  if (p.charAt(0) !== '/') p = '/' + p;
+  return p;
+}
+function lookup(p) {
+  p = normPath(p);
+  if (p === '/api/me') return DEMO_ME;
+  if (SNAP[p] !== undefined && SNAP[p] !== null) return SNAP[p];
+  var bare = p.split('?')[0];
+  if (SNAP[bare] !== undefined && SNAP[bare] !== null) return SNAP[bare];
+  var fb = [
+    [/^\/api\/patients\?/, '/api/patients'],
+    [/^\/api\/doctors\?/, '/api/doctors'],
+    [/^\/api\/departments\?/, '/api/departments'],
+    [/^\/api\/schedules\?/, '/api/schedules'],
+    [/^\/api\/registrations\?/, '/api/registrations'],
+    [/^\/api\/clinic-records\?/, '/api/clinic-records'],
+    [/^\/api\/prescriptions\?/, '/api/prescriptions'],
+    [/^\/api\/charges\?/, '/api/charges'],
+    [/^\/api\/pharmacy\/pending\?/, '/api/pharmacy/pending'],
+    [/^\/api\/pharmacy\/logs\?/, '/api/pharmacy/logs'],
+    [/^\/api\/inventory\?/, '/api/inventory'],
+    [/^\/api\/purchases\?/, '/api/purchases'],
+    [/^\/api\/suppliers\?/, '/api/suppliers'],
+    [/^\/api\/transactions\?/, '/api/transactions'],
+    [/^\/api\/risks\?/, '/api/risks'],
+    [/^\/api\/notices\?/, '/api/notices'],
+    [/^\/api\/users\?/, '/api/users'],
+    [/^\/api\/api-keys\?/, '/api/api-keys'],
+    [/^\/api\/registrations\/queue/, '/api/registrations/queue'],
+    [/^\/api\/sync\?/, '/api/sync?since=0&entities=patients']
+  ];
+  for (var i = 0; i < fb.length; i++) {
+    if (fb[i][0].test(p)) return SNAP[fb[i][1]] || {};
+  }
+  var m = p.match(/^\/api\/patients\/(\d+)\/visits$/);
+  if (m) return (SNAP['/api/patients/1/visits'] || {items: [], total: 0});
+  m = p.match(/^\/api\/inventory\/summary\?drug_id=(\d+)$/);
+  if (m) {
+    var rows = ((SNAP['/api/inventory'] || {}).items || []).filter(function (x) { return x.drug_id == m[1]; });
+    return {drug_id: Number(m[1]), total: rows.reduce(function (a, b) { return a + b.qty; }, 0), batches: rows};
+  }
+  m = p.match(/^\/api\/prescriptions\/(\d+)$/);
+  if (m) {
+    var rx = ((SNAP['/api/prescriptions'] || {}).items || []).filter(function (x) { return x.id == m[1]; })[0];
+    if (rx) return Object.assign({}, rx, {items: []});
+  }
+  m = p.match(/^\/api\/charges\/(\d+)$/);
+  if (m) {
+    var c = ((SNAP['/api/charges'] || {}).items || []).filter(function (x) { return x.id == m[1]; })[0];
+    if (c) return Object.assign({}, c, {items: []});
+  }
+  m = p.match(/^\/api\/drugs\/(\d+)$/);
+  if (m) {
+    var g = ((SNAP['/api/drugs'] || {}).items || []).filter(function (x) { return x.id == m[1]; })[0];
+    if (g) return Object.assign({}, g, {batches: []});
+  }
+  m = p.match(/^\/api\/purchases\/(\d+)$/);
+  if (m) {
+    var v = ((SNAP['/api/purchases'] || {}).items || []).filter(function (x) { return x.id == m[1]; })[0];
+    if (v) return Object.assign({}, v, {items: []});
+  }
+  m = p.match(/^\/api\/registrations\/(\d+)$/);
+  if (m) {
+    var rg = ((SNAP['/api/registrations'] || {}).items || []).filter(function (x) { return x.id == m[1]; })[0];
+    if (rg) return Object.assign({}, rg);
+  }
+  return null;
+}
+
+
+window.fetch = function (url, opt) {
+  var method = (opt && opt.method) || 'GET';
+  var path = String(url).replace(location.origin, '');
+  var status = 200, body;
+  if (method !== 'GET') {
+    body = {code: 200, message: '\u6f14\u793a\u73af\u5883\u53ea\u8bfb\uff0c\u5199\u64cd\u4f5c\u672a\u6267\u884c',
+            data: {}};
+  } else {
+    var data = lookup(path);
+    if (data === null || data === undefined) {
+      body = {code: 200, message: 'ok', data: []};
+    } else {
+      body = {code: 200, message: 'ok', data: data};
+    }
+  }
+  return Promise.resolve({
+    status: status, ok: true,
+    json: function () { return Promise.resolve(body); },
+    text: function () { return Promise.resolve(JSON.stringify(body)); }
+  });
+};
+window.CSV = function () { return Promise.reject(new Error('\u6f14\u793a\u73af\u5883\u4e0d\u652f\u6301\u5bfc\u51fa')); };
+
+try {
+  localStorage.setItem('his_token', 'demo');
+  localStorage.setItem('his_user', JSON.stringify(DEMO_ME));
+} catch (e) { /* ignore */ }
+
+window.demoAs = function (who) {
+  var m = DEMO_USERS[who];
+  if (!m) return;
+  try {
+    localStorage.setItem('his_user', JSON.stringify(m));
+    localStorage.setItem('his_token', 'demo');
+    sessionStorage.setItem('demo_as', who);
+  } catch (e) { /* ignore */ }
+  location.hash = '#/dash';
+  location.reload();
+};
+
+document.addEventListener('DOMContentLoaded', function () {
+  var bar = document.createElement('div');
+  bar.className = 'demo-bar';
+  var opts = Object.keys(DEMO_USERS).map(function (k) {
+    return '<option value="' + k + '"' + (k === DEMO_ME.user.username ? ' selected' : '') + '>'
+      + DEMO_USERS[k].user.name + '\uff08' + DEMO_USERS[k].user.role + '\uff09</option>';
+  }).join('');
+  bar.innerHTML = '<b>\u79bb\u7ebf\u6f14\u793a</b> \u6570\u636e\u53d6\u81ea\u98de\u533b\u6f14\u793a\u5b9e\u4f8b\u7684\u771f\u5b9e\u5feb\u7167\uff0c\u53ea\u8bfb\u6d4f\u89c8\uff0c\u5199\u64cd\u4f5c\u4e0d\u4f1a\u771f\u6b63\u6267\u884c\u3002'
+    + '<span class="who">\u5f53\u524d\u89c6\u89d2 <select onchange="demoAs(this.value)">' + opts + '</select></span>';
+  document.body.insertBefore(bar, document.body.firstChild);
+});
+
+</script>
+<script>
+/* 飞医医疗管理系统 · 框架层 */
+var TOKEN = localStorage.getItem('his_token') || '';
+var ME = JSON.parse(localStorage.getItem('his_user') || '{}');
+var PERMS = ME.perms || [];
+
+function api(method, path, body, raw) {
+  return fetch(PREFIX + path, {
+    method: method,
+    headers: Object.assign({'Content-Type': 'application/json'},
+      TOKEN ? {Authorization: 'Bearer ' + TOKEN} : {}),
+    body: (method === 'POST' || method === 'PUT' || method === 'DELETE') ? JSON.stringify(body || {}) : undefined
+  }).then(function (r) {
+    if (r.status === 401) { localStorage.clear(); location.href = 'login.html'; throw new Error('unauth'); }
+    if (r.status >= 400) {
+      return r.text().then(function (t) {
+        var msg = 'HTTP ' + r.status;
+        try { msg = (JSON.parse(t) || {}).message || msg; } catch (e) { /* 非 JSON */ }
+        throw new Error(msg);
+      });
+    }
+    return raw ? r.text() : r.json();
+  }).then(function (j) {
+    if (raw) return j;
+    if (j && j.code && j.code !== 200) throw new Error(j.message || ('错误 ' + j.code));
+    return j;
+  });
+}
+function GET(p) { return api('GET', p); }
+function POST(p, b) { return api('POST', p, b); }
+function PUT(p, b) { return api('PUT', p, b); }
+function DEL(p) { return api('DELETE', p); }
+function CSV(p) { return api('GET', p, null, true); }
+
+function toast(msg, err) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.background = err ? '#cf2f4b' : '#1c2340';
+  t.classList.remove('hidden');
+  clearTimeout(t._tm);
+  t._tm = setTimeout(function () { t.classList.add('hidden'); }, 2600);
+}
+function esc(s) {
+  return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+    return {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c];
+  });
+}
+function perm(p) { return PERMS.indexOf('*') >= 0 || PERMS.indexOf(p) >= 0; }
+
+/* ---------- 格式化 ---------- */
+function fmtMoney(n, noSym) {
+  if (n == null || n === '') return '—';
+  var v = Number(n);
+  var s = Math.abs(v) >= 10000
+    ? v.toLocaleString('zh-CN', {maximumFractionDigits: 2})
+    : v.toFixed(2);
+  return (noSym ? '' : '¥') + s;
+}
+/* 分 → 元 显示 */
+function fmtCents(c, noSym) {
+  if (c == null || c === '') return '—';
+  return fmtMoney(Number(c) / 100, noSym);
+}
+function fmtPct(x, digits) {
+  if (x == null || x === '') return '—';
+  return (Number(x) * 100).toFixed(digits == null ? 0 : digits) + '%';
+}
+function todayStr() {
+  var d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' +
+    String(d.getDate()).padStart(2, '0');
+}
+
+var NAV = [
+  ['dash', '工作台', '◱'],
+  ['patient', '患者管理', '☺'],
+  ['doctor', '医生管理', '🩺'],
+  ['schedule', '排班管理', '🗓'],
+  ['registration', '门诊挂号', '🎫'],
+  ['clinic', '门诊病历', '📋'],
+  ['prescription', '处方管理', '℞'],
+  ['charge', '收费结算', '¥'],
+  ['pharmacy', '药房发药', '💊'],
+  ['inventory', '药品库存', '❄'],
+  ['supplier', '供应商', '⧉'],
+  ['finance', '财务流水', '💰'],
+  ['risk', '风险预警', '⚠'],
+  ['system', '系统管理', '⚙']
+];
+
+function boot() {
+  if (!TOKEN) { location.href = 'login.html'; return; }
+  GET('/api/me').then(function (r) {
+    ME = r.data || {}; PERMS = ME.perms || [];
+    localStorage.setItem('his_user', JSON.stringify(ME));
+    document.getElementById('who').textContent = ME.user.name + ' · ' + (ME.user.role || '');
+    var nav = document.getElementById('nav');
+    nav.innerHTML = NAV.map(function (n) {
+      return '<a href="#/' + n[0] + '" data-k="' + n[0] + '">' +
+        '<span class="ic">' + n[2] + '</span>' + n[1] + '</a>';
+    }).join('');
+    nav.onclick = function (e) {
+      var a = e.target.closest('a'); if (!a) return;
+      e.preventDefault();
+      go(a.getAttribute('data-k'));
+    };
+    var key = (location.hash || '#/dash').replace('#/', '');
+    go(PAGES[key] ? key : 'dash');
+    document.getElementById('btn-logout').onclick = function () {
+      POST('/api/logout').then(function () {
+        localStorage.clear(); location.href = 'login.html';
+      }).catch(function () { localStorage.clear(); location.href = 'login.html'; });
+    };
+    window.addEventListener('hashchange', function () {
+      var k = (location.hash || '#/dash').replace('#/', '');
+      if (PAGES[k] && k !== CUR) go(k);
+    });
+    if (perm('his.risks.read')) {
+      GET('/api/dashboard').then(function (d) {
+        var n = ((d.data || {}).open_risks) || 0;
+        if (!n) return;
+        var a = document.querySelector('#nav a[data-k="risk"]');
+        if (a) a.insertAdjacentHTML('beforeend', '<b class="badge">' + n + '</b>');
+      }).catch(function () {});
+    }
+  }).catch(function (e) {
+    if (e.message !== 'unauth') location.href = 'login.html';
+  });
+}
+
+var CUR = null;
+function go(key) {
+  CUR = key;
+  if (location.hash !== '#/' + key) location.hash = '#/' + key;
+  document.querySelectorAll('#nav a').forEach(function (a) {
+    a.classList.toggle('on', a.getAttribute('data-k') === key);
+  });
+  var main = document.getElementById('main');
+  main.innerHTML = '<div class="empty">加载中…</div>';
+  var task;
+  try {
+    task = PAGES[key](main);
+  } catch (e) {
+    task = Promise.reject(e);
+  }
+  Promise.resolve(task).catch(function (e) {
+    if (e && e.message === 'unauth') return;
+    main.innerHTML = '<div class="empty">加载失败：' + esc(e && e.message) + '</div>';
+  });
+}
+
+function modal(html, wide) {
+  var mask = document.getElementById('modal-mask');
+  var box = document.getElementById('modal');
+  box.innerHTML = html;
+  box.className = 'modal' + (wide ? ' wide' : '');
+  mask.classList.remove('hidden');
+  mask.onclick = function (e) { if (e.target === mask) closeModal(); };
+}
+function closeModal() {
+  document.getElementById('modal-mask').classList.add('hidden');
+}
+
+function table(headers, rows, rowHtml, empty) {
+  if (!rows || !rows.length) return '<div class="empty">' + (empty || '暂无数据') + '</div>';
+  return '<div class="tw"><table><thead><tr>' + headers.map(function (h) {
+    if (h && h.charAt(0) === '~') return '<th class="num">' + h.slice(1) + '</th>';
+    return '<th>' + h + '</th>';
+  }).join('') + '</tr></thead><tbody>' + rows.map(rowHtml).join('') + '</tbody></table></div>';
+}
+
+function tag(text, cls) {
+  return '<span class="tag ' + (cls || '') + '">' + esc(text) + '</span>';
+}
+var REG_TAG = {'waiting': ['候诊中', ''], 'called': ['已叫号', 'pri'], 'in_consult': ['接诊中', 'pri'],
+               'done': ['已完成', 'ok'], 'cancelled': ['已退号', 'err']};
+function regTag(s) {
+  var m = REG_TAG[s] || [s, ''];
+  return tag(m[0], m[1]);
+}
+var RX_TAG = {'draft': ['草稿', ''], 'submitted': ['已提交', 'pri'], 'dispensed': ['已发药', 'ok'],
+              'cancelled': ['已作废', 'err']};
+function rxTag(s) {
+  var m = RX_TAG[s] || [s, ''];
+  return tag(m[0], m[1]);
+}
+function insuranceTag(t) {
+  var m = {'employee': ['职工医保', 'pri'], 'resident': ['居民医保', 'ok'], 'self': ['自费', '']};
+  var x = m[t] || [t, ''];
+  return tag(x[0], x[1]);
+}
+function levelTag(g) {
+  var m = {'risk': '高风险', 'warn': '警告', 'info': '提示'};
+  return tag(m[g] || g, g === 'risk' ? 'err' : (g === 'warn' ? 'warn' : ''));
+}
+function kpi(v, label, cls) {
+  return '<div class="kpi ' + (cls || '') + '"><b>' + esc(v) + '</b><span>' + esc(label) + '</span></div>';
+}
+function field(label, input, hint) {
+  return '<label class="fld"><span>' + esc(label) + '</span>' + input +
+    (hint ? '<i>' + esc(hint) + '</i>' : '') + '</label>';
+}
+function bar(pct, cls) {
+  var w = Math.max(0, Math.min(100, pct));
+  return '<div class="bar"><i class="' + (cls || '') + '" style="width:' + w + '%"></i></div>';
+}
+function dl(p, name) {
+  CSV(p).then(function (t) {
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([t], {type: 'text/csv;charset=utf-8'}));
+    a.download = name || 'export.csv';
+    a.click();
+  }).catch(function (e) { toast(e.message, true); });
+}
+function qs(o) {
+  var k = Object.keys(o || {}).filter(function (x) { return o[x]; });
+  if (!k.length) return '';
+  return '?' + k.map(function (x) { return x + '=' + encodeURIComponent(o[x]); }).join('&');
+}
+
+</script>
+<script>
+/* 飞医医疗管理系统 · 页面层 */
+var PAGES = {};
+
+/* ---------- 工作台 ---------- */
+PAGES.dash = function (main) {
+  return GET('/api/dashboard').then(function (r) {
+    var d = r.data || {};
+    main.innerHTML =
+      '<h2>工作台</h2>' +
+      '<div class="kpis">' +
+      kpi(d.registrations, '今日挂号') +
+      kpi(d.consulted, '今日接诊') +
+      kpi(d.prescriptions, '今日处方') +
+      kpi(fmtCents(d.income_cents), '今日收入', 'ok') +
+      kpi(d.pending_dispense, '待发药处方', d.pending_dispense ? 'warn' : '') +
+      kpi(d.waiting, '候诊人数', d.waiting ? 'warn' : '') +
+      kpi(d.low_stock, '低库存药品', d.low_stock ? 'warn' : '') +
+      kpi(d.near_expiry, '临期批次', d.near_expiry ? 'warn' : '') +
+      kpi(d.open_risks, '未处理风险', d.open_risks ? 'err' : '') +
+      '</div>' +
+      '<div class="grid2">' +
+      '<div class="card"><h3>候诊队列</h3><div id="dash-queue">加载中…</div></div>' +
+      '<div class="card"><h3>快捷操作</h3><div class="quick">' +
+      (perm('his.registrations.write') ? '<a class="btn" href="#/registration">门诊挂号</a>' : '') +
+      (perm('his.prescriptions.write') ? '<a class="btn ghost" href="#/prescription">开处方</a>' : '') +
+      (perm('his.pharmacy.read') ? '<a class="btn ghost" href="#/pharmacy">药房发药</a>' : '') +
+      (perm('his.charges.write') ? '<a class="btn ghost" href="#/charge">收费结算</a>' : '') +
+      '</div></div></div>';
+    return GET('/api/registrations/queue').then(function (r2) {
+      var el = document.getElementById('dash-queue');
+      if (el) el.innerHTML = table(['排队号', '患者', '医生', '状态'], (r2.data.items || []).slice(0, 8), function (x) {
+        return '<tr><td class="num">' + x.no_in_queue + '</td><td>' + esc(x.patient_name || '') + '</td>' +
+          '<td>' + esc(x.doctor_name || '') + '</td><td>' + regTag(x.status) + '</td></tr>';
+      }, '当前无人候诊');
+    });
+  });
+};
+
+/* ---------- 患者管理 ---------- */
+PAGES.patient = function (main) {
+  main.innerHTML = '<h2>患者管理</h2><div class="toolbar">' +
+    (perm('his.patients.write') ? '<button class="btn" id="btn-new">建档</button>' : '') +
+    '<input id="f-kw" placeholder="姓名/档案号/手机号" class="inp">' +
+    '<button class="btn ghost" id="btn-search">搜索</button>' +
+    '<button class="btn ghost" id="btn-export">导出 CSV</button></div><div id="list"></div>';
+  if (document.getElementById('btn-export'))
+    document.getElementById('btn-export').onclick = function () { dl('/api/export/patients', 'patients.csv'); };
+  function load(kw) {
+    GET('/api/patients' + qs({keyword: kw})).then(function (r) {
+      document.getElementById('list').innerHTML = table(
+        ['档案号', '姓名', '性别', '出生日期', '电话', '过敏史', '医保', '操作'], r.data.items, function (x) {
+          var ops = '';
+          if (perm('his.patients.read')) ops += '<button class="btn sm ghost" data-visits="' + x.id + '">就诊史</button>';
+          return '<tr><td>' + esc(x.mrn) + '</td><td>' + esc(x.name) + '</td>' +
+            '<td>' + (x.gender === 'M' ? '男' : '女') + '</td><td>' + esc(x.birth || '—') + '</td>' +
+            '<td>' + esc(x.phone || '—') + '</td><td>' + esc(x.allergy || '—') + '</td>' +
+            '<td>' + insuranceTag(x.insurance_type) + '</td><td class="ops">' + (ops || '—') + '</td></tr>';
+        });
+      document.getElementById('list').onclick = function (e) {
+        var b = e.target.closest('button'); if (!b || !b.getAttribute('data-visits')) return;
+        GET('/api/patients/' + b.getAttribute('data-visits') + '/visits').then(function (r2) {
+          var items = r2.data.items || [];
+          modal('<h3>就诊史</h3>' + table(['挂号号', '时间', '~挂号费', '状态', '病历/处方'], items, function (v) {
+            var brief = (v.record && (v.record.diagnosis || v.record.chief_complaint)) ? esc(v.record.diagnosis || v.record.chief_complaint) : '—';
+            if (v.prescriptions && v.prescriptions.length) brief += '（' + v.prescriptions.length + ' 张处方）';
+            return '<tr><td>' + esc(v.no) + '</td><td>' + esc(v.created_at) + '</td>' +
+              '<td class="num">' + fmtCents(v.fee_cents) + '</td><td>' + regTag(v.status) + '</td><td>' + brief + '</td></tr>';
+          }, '暂无就诊记录', ) +
+          '<div class="m-foot"><button class="btn ghost" onclick="closeModal()">关闭</button></div>', true);
+        });
+      };
+    });
+  }
+  document.getElementById('btn-search').onclick = function () { load(document.getElementById('f-kw').value.trim()); };
+  if (document.getElementById('btn-new'))
+    document.getElementById('btn-new').onclick = function () {
+      modal('<h3>患者建档</h3>' +
+        field('姓名', '<input id="f-name">') +
+        field('性别', '<select id="f-gender"><option value="M">男</option><option value="F">女</option></select>') +
+        field('出生日期', '<input id="f-birth" type="date">') +
+        field('电话', '<input id="f-phone">') +
+        field('过敏史', '<input id="f-allergy" placeholder="无">') +
+        field('医保类型', '<select id="f-itype"><option value="self">自费</option>' +
+          '<option value="employee">职工医保（85%）</option><option value="resident">居民医保（65%）</option></select>') +
+        field('医保号', '<input id="f-ino" placeholder="自费可不填">') +
+        '<div class="m-foot"><button class="btn" id="btn-ok">保存</button>' +
+        '<button class="btn ghost" onclick="closeModal()">取消</button></div>');
+      document.getElementById('btn-ok').onclick = function () {
+        POST('/api/patients', {
+          name: document.getElementById('f-name').value.trim(),
+          gender: document.getElementById('f-gender').value,
+          birth: document.getElementById('f-birth').value || null,
+          phone: document.getElementById('f-phone').value.trim(),
+          allergy: document.getElementById('f-allergy').value.trim(),
+          insurance_type: document.getElementById('f-itype').value,
+          insurance_no: document.getElementById('f-ino').value.trim()
+        }).then(function (r2) { toast('建档成功：' + r2.data.mrn); closeModal(); load(); })
+          .catch(function (e) { toast(e.message, true); });
+      };
+    };
+  load();
+};
+
+/* ---------- 医生管理 ---------- */
+PAGES.doctor = function (main) {
+  main.innerHTML = '<h2>医生管理</h2><div class="toolbar">' +
+    (perm('his.doctors.write') ? '<button class="btn" id="btn-new">新增医生</button>' : '') +
+    '</div><div id="list"></div>';
+  function load() {
+    GET('/api/doctors').then(function (r) {
+      document.getElementById('list').innerHTML = table(
+        ['姓名', '科室', '职称', '专长', '~挂号费'], r.data.items, function (x) {
+          return '<tr><td>' + esc(x.name) + '</td><td>' + esc(x.dept_name || '') + '</td>' +
+            '<td>' + esc(x.title || '') + '</td><td>' + esc(x.specialty || '—') + '</td>' +
+            '<td class="num">' + fmtCents(x.fee_cents) + '</td></tr>';
+        });
+    });
+  }
+  if (document.getElementById('btn-new'))
+    document.getElementById('btn-new').onclick = function () {
+      GET('/api/departments').then(function (r) {
+        modal('<h3>新增医生</h3>' +
+          field('姓名', '<input id="f-name">') +
+          field('科室', '<select id="f-dept">' + r.data.items.map(function (d) {
+            return '<option value="' + d.id + '">' + esc(d.name) + '</option>';
+          }).join('') + '</select>') +
+          field('职称', '<select id="f-title"><option>主任医师</option><option>副主任医师</option>' +
+            '<option>主治医师</option><option>住院医师</option></select>') +
+          field('挂号费(元)', '<input id="f-fee" type="number" step="0.01" value="10">') +
+          field('专长', '<input id="f-spec">') +
+          '<div class="m-foot"><button class="btn" id="btn-ok">保存</button>' +
+          '<button class="btn ghost" onclick="closeModal()">取消</button></div>');
+        document.getElementById('btn-ok').onclick = function () {
+          POST('/api/doctors', {
+            name: document.getElementById('f-name').value.trim(),
+            dept_id: Number(document.getElementById('f-dept').value),
+            title: document.getElementById('f-title').value,
+            fee: Number(document.getElementById('f-fee').value),
+            specialty: document.getElementById('f-spec').value.trim()
+          }).then(function () { toast('已保存'); closeModal(); load(); })
+            .catch(function (e) { toast(e.message, true); });
+        };
+      });
+    };
+  load();
+};
+
+/* ---------- 排班管理 ---------- */
+PAGES.schedule = function (main) {
+  main.innerHTML = '<h2>排班管理</h2><div class="toolbar">' +
+    (perm('his.schedules.write') ? '<button class="btn" id="btn-new">新增排班</button>' : '') +
+    '</div><div id="list"></div>';
+  function load() {
+    GET('/api/schedules').then(function (r) {
+      document.getElementById('list').innerHTML = table(
+        ['日期', '时段', '医生', '职称', '~号源', '~已约', '余号'], r.data.items, function (x) {
+          var left = x.quota - x.booked;
+          return '<tr><td>' + esc(x.sched_date) + '</td><td>' + (x.period === 'AM' ? '上午' : '下午') + '</td>' +
+            '<td>' + esc(x.doctor_name || '') + '</td><td>' + esc(x.doctor_title || '') + '</td>' +
+            '<td class="num">' + x.quota + '</td><td class="num">' + x.booked + '</td>' +
+            '<td>' + (left > 0 ? tag(left + ' 个', 'ok') : tag('约满', 'err')) + '</td></tr>';
+        });
+    });
+  }
+  if (document.getElementById('btn-new'))
+    document.getElementById('btn-new').onclick = function () {
+      GET('/api/doctors').then(function (r) {
+        modal('<h3>新增排班</h3>' +
+          field('医生', '<select id="f-doc">' + r.data.items.map(function (d) {
+            return '<option value="' + d.id + '">' + esc(d.name) + '（' + esc(d.dept_name || '') + '）</option>';
+          }).join('') + '</select>') +
+          field('日期', '<input id="f-date" type="date" value="' + todayStr() + '">') +
+          field('时段', '<select id="f-period"><option value="AM">上午</option><option value="PM">下午</option></select>') +
+          field('号源', '<input id="f-quota" type="number" value="20" min="1">') +
+          '<div class="m-foot"><button class="btn" id="btn-ok">保存</button>' +
+          '<button class="btn ghost" onclick="closeModal()">取消</button></div>');
+        document.getElementById('btn-ok').onclick = function () {
+          POST('/api/schedules', {
+            doctor_id: Number(document.getElementById('f-doc').value),
+            sched_date: document.getElementById('f-date').value,
+            period: document.getElementById('f-period').value,
+            quota: Number(document.getElementById('f-quota').value)
+          }).then(function () { toast('排班已创建'); closeModal(); load(); })
+            .catch(function (e) { toast(e.message, true); });
+        };
+      });
+    };
+  load();
+};
+
+/* ---------- 门诊挂号 ---------- */
+PAGES.registration = function (main) {
+  main.innerHTML = '<h2>门诊挂号</h2><div class="toolbar">' +
+    (perm('his.registrations.write') ? '<button class="btn" id="btn-new">挂号</button>' : '') +
+    '<select id="f-status"><option value="">全部状态</option>' +
+    '<option value="waiting">候诊中</option><option value="called">已叫号</option>' +
+    '<option value="in_consult">接诊中</option><option value="done">已完成</option><option value="cancelled">已退号</option></select>' +
+    '<button class="btn ghost" id="btn-filter">筛选</button>' +
+    '<button class="btn ghost" id="btn-export">导出 CSV</button></div><div id="list"></div>';
+  if (document.getElementById('btn-export'))
+    document.getElementById('btn-export').onclick = function () { dl('/api/export/registrations', 'registrations.csv'); };
+  function actBtn(x) {
+    if (!perm('his.registrations.write')) return '—';
+    var m = {'waiting': [['to_called', '叫号'], ['to_cancelled', '退号']],
+             'called': [['to_in_consult', '接诊'], ['to_cancelled', '退号']],
+             'in_consult': [['to_done', '完成']]};
+    return (m[x.status] || []).map(function (a) {
+      return '<button class="btn sm ghost" data-id="' + x.id + '" data-act="' + a[0] + '">' + a[1] + '</button>';
+    }).join(' ') || '—';
+  }
+  function load(st) {
+    GET('/api/registrations' + qs({status: st})).then(function (r) {
+      document.getElementById('list').innerHTML = table(
+        ['挂号号', '时间', '状态', '~挂号费', '已收费', '操作'], r.data.items, function (x) {
+          return '<tr><td>' + esc(x.no) + '</td><td>' + esc(x.created_at) + '</td><td>' + regTag(x.status) + '</td>' +
+            '<td class="num">' + fmtCents(x.fee_cents) + '</td>' +
+            '<td>' + (x.paid ? tag('已收费', 'ok') : tag('未收费', 'warn')) + '</td>' +
+            '<td class="ops">' + actBtn(x) + '</td></tr>';
+        });
+      document.getElementById('list').onclick = function (e) {
+        var b = e.target.closest('button'); if (!b) return;
+        POST('/api/registrations/' + b.getAttribute('data-id') + '/transition', {action: b.getAttribute('data-act')})
+          .then(function () { toast('操作成功'); load(document.getElementById('f-status').value); })
+          .catch(function (e2) { toast(e2.message, true); });
+      };
+    });
+  }
+  document.getElementById('btn-filter').onclick = function () { load(document.getElementById('f-status').value); };
+  if (document.getElementById('btn-new'))
+    document.getElementById('btn-new').onclick = function () {
+      Promise.all([GET('/api/patients'), GET('/api/schedules')]).then(function (rs) {
+        var open = (rs[1].data.items || []).filter(function (s) { return s.status === 'open' && s.quota > s.booked; });
+        modal('<h3>门诊挂号</h3>' +
+          field('患者', '<select id="f-pat">' + rs[0].data.items.map(function (p) {
+            return '<option value="' + p.id + '">' + esc(p.name) + '（' + esc(p.mrn) + '）</option>';
+          }).join('') + '</select>') +
+          field('排班', '<select id="f-sched">' + open.map(function (s) {
+            return '<option value="' + s.id + '">' + esc(s.sched_date) + ' ' + (s.period === 'AM' ? '上午' : '下午') +
+              ' ' + esc(s.doctor_name || '') + '（余 ' + (s.quota - s.booked) + '）</option>';
+          }).join('') + '</select>', open.length ? '' : '暂无可约排班') +
+          '<div class="m-foot"><button class="btn" id="btn-ok">确认挂号</button>' +
+          '<button class="btn ghost" onclick="closeModal()">取消</button></div>');
+        document.getElementById('btn-ok').onclick = function () {
+          POST('/api/registrations', {
+            patient_id: Number(document.getElementById('f-pat').value),
+            schedule_id: Number(document.getElementById('f-sched').value)
+          }).then(function (r2) {
+            toast('挂号成功：' + r2.data.no + '，挂号费 ' + fmtCents(r2.data.fee_cents));
+            closeModal(); load();
+          }).catch(function (e) { toast(e.message, true); });
+        };
+      });
+    };
+  load();
+};
+
+/* ---------- 门诊病历 ---------- */
+PAGES.clinic = function (main) {
+  main.innerHTML = '<h2>门诊病历</h2><div id="list"></div>';
+  function load() {
+    GET('/api/clinic-records').then(function (r) {
+      document.getElementById('list').innerHTML = table(
+        ['#', '~挂号单', '主诉', '诊断', '处理意见', '时间'], r.data.items, function (x) {
+          return '<tr><td>' + x.id + '</td><td class="num">' + x.registration_id + '</td>' +
+            '<td>' + esc(x.chief_complaint || '—') + '</td><td>' + esc(x.diagnosis || '—') + '</td>' +
+            '<td>' + esc(x.advice || '—') + '</td><td>' + esc(x.created_at) + '</td></tr>';
+        });
+    });
+  }
+  load();
+};
+
+/* ---------- 处方管理 ---------- */
+PAGES.prescription = function (main) {
+  main.innerHTML = '<h2>处方管理</h2><div class="toolbar">' +
+    (perm('his.prescriptions.write') ? '<button class="btn" id="btn-new">开处方</button>' : '') +
+    '<button class="btn ghost" id="btn-export">导出 CSV</button></div><div id="list"></div>';
+  if (document.getElementById('btn-export'))
+    document.getElementById('btn-export').onclick = function () { dl('/api/export/prescriptions', 'prescriptions.csv'); };
+  function actBtn(x) {
+    if (!perm('his.prescriptions.write')) return '—';
+    var m = {'draft': [['to_submitted', '提交']],
+             'submitted': [['to_dispensed', '发药'], ['to_cancelled', '作废']]};
+    return (m[x.status] || []).map(function (a) {
+      return '<button class="btn sm ghost" data-id="' + x.id + '" data-act="' + a[0] + '">' + a[1] + '</button>';
+    }).join(' ') || '—';
+  }
+  function load() {
+    GET('/api/prescriptions').then(function (r) {
+      document.getElementById('list').innerHTML = table(
+        ['处方号', '时间', '状态', '~金额', '操作'], r.data.items, function (x) {
+          return '<tr><td>' + esc(x.no) + '</td><td>' + esc(x.created_at) + '</td><td>' + rxTag(x.status) + '</td>' +
+            '<td class="num">' + fmtCents(x.total_cents) + '</td><td class="ops">' + actBtn(x) + '</td></tr>';
+        });
+      document.getElementById('list').onclick = function (e) {
+        var b = e.target.closest('button'); if (!b) return;
+        var id = b.getAttribute('data-id'), act = b.getAttribute('data-act');
+        if (act === 'view') return;
+        POST('/api/prescriptions/' + id + '/transition', {action: act})
+          .then(function (r2) {
+            toast(act === 'to_dispensed' ? '发药成功，库存已扣减' : '操作成功');
+            load();
+          }).catch(function (e2) { toast(e2.message, true); });
+      };
+    });
+  }
+  if (document.getElementById('btn-new'))
+    document.getElementById('btn-new').onclick = function () {
+      Promise.all([GET('/api/patients'), GET('/api/doctors'), GET('/api/drugs')]).then(function (rs) {
+        var drugs = rs[2].data.items;
+        modal('<h3>开处方</h3>' +
+          field('患者', '<select id="f-pat">' + rs[0].data.items.map(function (p) {
+            return '<option value="' + p.id + '">' + esc(p.name) + '（' + esc(p.mrn) + '）</option>';
+          }).join('') + '</select>') +
+          field('医生', '<select id="f-doc">' + rs[1].data.items.map(function (d) {
+            return '<option value="' + d.id + '">' + esc(d.name) + '</option>';
+          }).join('') + '</select>') +
+          '<div id="rx-items"></div>' +
+          '<div class="toolbar"><button class="btn sm ghost" id="btn-add-item">＋ 添加药品</button></div>' +
+          '<div class="m-foot"><button class="btn" id="btn-ok">保存处方</button>' +
+          '<button class="btn ghost" onclick="closeModal()">取消</button></div>', true);
+        var n = 0;
+        function addItem() {
+          n++;
+          document.getElementById('rx-items').insertAdjacentHTML('beforeend',
+            '<div class="fld-row" data-row="' + n + '">' +
+            '<select class="i-drug">' + drugs.map(function (d) {
+              return '<option value="' + d.id + '">' + esc(d.name) + ' ' + fmtCents(d.price_cents) + '</option>';
+            }).join('') + '</select>' +
+            '<input class="i-dose" type="number" step="0.01" placeholder="剂量" style="width:80px">' +
+            '<input class="i-freq" placeholder="用法 如 tid" style="width:90px">' +
+            '<input class="i-days" type="number" value="1" min="1" placeholder="天数" style="width:70px">' +
+            '<input class="i-qty" type="number" value="1" min="1" placeholder="数量" style="width:70px">' +
+            '</div>');
+        }
+        addItem();
+        document.getElementById('btn-add-item').onclick = addItem;
+        document.getElementById('btn-ok').onclick = function () {
+          var items = [];
+          document.querySelectorAll('#rx-items .fld-row').forEach(function (row) {
+            items.push({
+              drug_id: Number(row.querySelector('.i-drug').value),
+              dose: Number(row.querySelector('.i-dose').value || 0),
+              frequency: row.querySelector('.i-freq').value.trim(),
+              days: Number(row.querySelector('.i-days').value || 1),
+              qty: Number(row.querySelector('.i-qty').value || 1)
+            });
+          });
+          POST('/api/prescriptions', {
+            patient_id: Number(document.getElementById('f-pat').value),
+            doctor_id: Number(document.getElementById('f-doc').value),
+            items: items
+          }).then(function (r2) {
+            toast('处方已保存：' + r2.data.no + '，金额 ' + fmtCents(r2.data.total_cents));
+            closeModal(); load();
+          }).catch(function (e) { toast(e.message, true); });
+        };
+      });
+    };
+  load();
+};
+
+/* ---------- 收费结算 ---------- */
+PAGES.charge = function (main) {
+  main.innerHTML = '<h2>收费结算</h2><div class="toolbar">' +
+    (perm('his.charges.write') ? '<button class="btn" id="btn-new">收费</button>' : '') +
+    '<button class="btn ghost" id="btn-export">导出 CSV</button></div><div id="list"></div>';
+  if (document.getElementById('btn-export'))
+    document.getElementById('btn-export').onclick = function () { dl('/api/export/charges', 'charges.csv'); };
+  function load() {
+    GET('/api/charges').then(function (r) {
+      document.getElementById('list').innerHTML = table(
+        ['收费号', '时间', '~总额', '~折扣', '~实收', '方式', '状态', '操作'], r.data.items, function (x) {
+          var ops = '';
+          if (perm('his.charges.write') && x.status === 'paid')
+            ops = '<button class="btn sm ghost" data-ref="' + x.id + '">退费</button>';
+          return '<tr><td>' + esc(x.no) + '</td><td>' + esc(x.created_at) + '</td>' +
+            '<td class="num">' + fmtCents(x.total_cents) + '</td><td class="num">' + fmtPct(x.discount_rate) + '</td>' +
+            '<td class="num">' + fmtCents(x.paid_cents) + '</td><td>' + esc(x.pay_method) + '</td>' +
+            '<td>' + tag(x.status === 'paid' ? '已支付' : '已退费', x.status === 'paid' ? 'ok' : 'err') + '</td>' +
+            '<td class="ops">' + (ops || '—') + '</td></tr>';
+        });
+      document.getElementById('list').onclick = function (e) {
+        var b = e.target.closest('button'); if (!b || !b.getAttribute('data-ref')) return;
+        var id = b.getAttribute('data-ref');
+        POST('/api/charges/' + id + '/refund', {}).then(function (r2) {
+          toast('退费成功：' + fmtCents(r2.data.refund_cents)); load();
+        }).catch(function (e2) { toast(e2.message, true); });
+      };
+    });
+  }
+  if (document.getElementById('btn-new'))
+    document.getElementById('btn-new').onclick = function () {
+      Promise.all([GET('/api/registrations?status=done'), GET('/api/prescriptions')]).then(function (rs) {
+        var regs = (rs[0].data.items || []).filter(function (x) { return !x.paid; });
+        var rxs = (rs[1].data.items || []).filter(function (x) { return x.status === 'submitted' || x.status === 'dispensed' || x.status === 'draft'; });
+        modal('<h3>收费结算</h3>' +
+          field('挂号单（挂号费）', '<select id="f-reg"><option value="">不收挂号费</option>' + regs.map(function (x) {
+            return '<option value="' + x.id + '">' + esc(x.no) + ' ' + fmtCents(x.fee_cents) + '</option>';
+          }).join('') + '</select>') +
+          '<div class="fld"><span>处方（可多选）</span><select id="f-rxs" multiple size="5">' + rxs.map(function (x) {
+            return '<option value="' + x.id + '">' + esc(x.no) + ' ' + fmtCents(x.total_cents) + '</option>';
+          }).join('') + '</select></div>' +
+          field('支付方式', '<select id="f-pay"><option value="cash">现金</option><option value="wechat">微信</option>' +
+            '<option value="alipay">支付宝</option><option value="insurance">医保</option></select>') +
+          '<div class="m-foot"><button class="btn" id="btn-ok">确认收款</button>' +
+          '<button class="btn ghost" onclick="closeModal()">取消</button></div>', true);
+        document.getElementById('btn-ok').onclick = function () {
+          var sel = document.getElementById('f-rxs');
+          var rxids = [];
+          for (var i = 0; i < sel.options.length; i++) if (sel.options[i].selected) rxids.push(Number(sel.options[i].value));
+          var regv = document.getElementById('f-reg').value;
+          POST('/api/charges', {
+            registration_id: regv ? Number(regv) : null,
+            prescription_ids: rxids,
+            pay_method: document.getElementById('f-pay').value
+          }).then(function (r2) {
+            toast('收费成功：' + r2.data.no + '，实收 ' + fmtCents(r2.data.paid_cents));
+            closeModal(); load();
+          }).catch(function (e) { toast(e.message, true); });
+        };
+      });
+    };
+  load();
+};
+
+/* ---------- 药房发药 ---------- */
+PAGES.pharmacy = function (main) {
+  main.innerHTML = '<h2>药房发药</h2><div class="toolbar">' +
+    '<button class="btn ghost" onclick="location.reload()">刷新</button></div>' +
+    '<div class="card"><h3>待发药处方</h3><div id="pending"></div></div>' +
+    '<div class="card"><h3>发药记录</h3><div id="logs"></div></div>';
+  Promise.all([GET('/api/pharmacy/pending'), GET('/api/pharmacy/logs')]).then(function (rs) {
+    document.getElementById('pending').innerHTML = table(
+      ['处方号', '~金额', '~明细数', '操作'], rs[0].data.items, function (x) {
+        var ops = perm('his.prescriptions.write')
+          ? '<button class="btn sm ok" data-disp="' + x.id + '">发药</button>' : '—';
+        return '<tr><td>' + esc(x.no) + '</td><td class="num">' + fmtCents(x.total_cents) + '</td>' +
+          '<td class="num">' + (x.items || []).length + '</td><td class="ops">' + ops + '</td></tr>';
+      }, '暂无待发药处方');
+    document.getElementById('pending').onclick = function (e) {
+      var b = e.target.closest('button'); if (!b || !b.getAttribute('data-disp')) return;
+      POST('/api/prescriptions/' + b.getAttribute('data-disp') + '/transition', {action: 'to_dispensed'})
+        .then(function () { toast('发药成功'); location.reload(); })
+        .catch(function (e2) { toast(e2.message, true); });
+    };
+    document.getElementById('logs').innerHTML = table(
+      ['时间', '药品', '~数量', '批次', '操作人'], rs[1].data.items, function (x) {
+        return '<tr><td>' + esc(x.created_at) + '</td><td>' + esc(x.drug_name || '') + '</td>' +
+          '<td class="num">' + x.qty + '</td><td>' + esc(x.batch_no || '—') + '</td>' +
+          '<td>' + esc(x.operator || '—') + '</td></tr>';
+      });
+  });
+};
+
+/* ---------- 药品库存 ---------- */
+PAGES.inventory = function (main) {
+  main.innerHTML = '<h2>药品库存</h2><div class="toolbar">' +
+    '<button class="btn ghost" id="btn-export">导出 CSV</button></div><div id="list"></div>';
+  if (document.getElementById('btn-export'))
+    document.getElementById('btn-export').onclick = function () { dl('/api/export/inventory', 'inventory.csv'); };
+  function load() {
+    GET('/api/inventory').then(function (r) {
+      document.getElementById('list').innerHTML = table(
+        ['药品', '批次', '~数量', '效期', '~安全库存', '状态'], r.data.items, function (x) {
+          var expSoon = x.expire_at && (new Date(x.expire_at) - new Date()) < 90 * 86400000;
+          var low = x.qty <= x.safe_stock;
+          return '<tr><td>' + esc(x.drug_name || x.drug_id) + '</td><td>' + esc(x.batch_no) + '</td>' +
+            '<td class="num">' + x.qty + '</td><td>' + esc(x.expire_at || '—') + '</td>' +
+            '<td class="num">' + x.safe_stock + '</td>' +
+            '<td>' + (low ? tag('低库存', 'err') : (expSoon ? tag('临期', 'warn') : tag('正常', 'ok'))) + '</td></tr>';
+        });
+    });
+  }
+  load();
+};
+
+/* ---------- 供应商 ---------- */
+PAGES.supplier = function (main) {
+  main.innerHTML = '<h2>供应商管理</h2><div class="toolbar">' +
+    (perm('his.suppliers.write') ? '<button class="btn" id="btn-new">新增供应商</button>' : '') +
+    '</div><div id="list"></div>';
+  function load() {
+    GET('/api/suppliers').then(function (r) {
+      document.getElementById('list').innerHTML = table(
+        ['名称', '联系人', '电话', '~账期(天)', '~应付金额'], r.data.items, function (x) {
+          return '<tr><td>' + esc(x.name) + '</td><td>' + esc(x.contact || '—') + '</td>' +
+            '<td>' + esc(x.phone || '—') + '</td><td class="num">' + x.credit_days + '</td>' +
+            '<td class="num">' + fmtCents(x.payable_cents) + '</td></tr>';
+        });
+    });
+  }
+  if (document.getElementById('btn-new'))
+    document.getElementById('btn-new').onclick = function () {
+      modal('<h3>新增供应商</h3>' +
+        field('名称', '<input id="f-name">') +
+        field('联系人', '<input id="f-contact">') +
+        field('电话', '<input id="f-phone">') +
+        field('账期(天)', '<input id="f-days" type="number" value="30">') +
+        '<div class="m-foot"><button class="btn" id="btn-ok">保存</button>' +
+        '<button class="btn ghost" onclick="closeModal()">取消</button></div>');
+      document.getElementById('btn-ok').onclick = function () {
+        POST('/api/suppliers', {
+          name: document.getElementById('f-name').value.trim(),
+          contact: document.getElementById('f-contact').value.trim(),
+          phone: document.getElementById('f-phone').value.trim(),
+          credit_days: Number(document.getElementById('f-days').value)
+        }).then(function () { toast('已保存'); closeModal(); load(); })
+          .catch(function (e) { toast(e.message, true); });
+      };
+    };
+  load();
+};
+
+/* ---------- 财务流水 ---------- */
+PAGES.finance = function (main) {
+  main.innerHTML = '<h2>财务流水</h2><div class="toolbar">' +
+    '<button class="btn ghost" id="btn-export">导出 CSV</button></div><div id="sum"></div><div id="list"></div>';
+  document.getElementById('btn-export').onclick = function () { dl('/api/export/transactions', 'transactions.csv'); };
+  Promise.all([GET('/api/finance/summary'), GET('/api/transactions')]).then(function (rs) {
+    var s = rs[0].data, items = rs[1].data.items;
+    document.getElementById('sum').innerHTML = '<div class="kpis">' +
+      kpi(fmtCents(s.income_cents), '今日收入', 'ok') +
+      kpi(fmtCents(s.refund_cents), '今日退款', 'err') +
+      kpi(s.charge_count, '收费单') +
+      kpi(s.rx_count, '处方单') + '</div>';
+    var TT = {'income': ['收入', 'ok'], 'expense': ['采购', 'warn'], 'refund': ['退款', 'err']};
+    document.getElementById('list').innerHTML = table(
+      ['时间', '类型', '~金额', '方式', '备注'], items, function (x) {
+        var t = TT[x.ttype] || [x.ttype, ''];
+        return '<tr><td>' + esc(x.created_at) + '</td><td>' + tag(t[0], t[1]) + '</td>' +
+          '<td class="num">' + fmtCents(x.amount_cents) + '</td><td>' + esc(x.pay_method || '—') + '</td>' +
+          '<td>' + esc(x.note || '') + '</td></tr>';
+      });
+  });
+};
+
+/* ---------- 风险预警 ---------- */
+PAGES.risk = function (main) {
+  main.innerHTML = '<h2>风险预警</h2><div class="toolbar">' +
+    (perm('his.risks.write') ? '<button class="btn" id="btn-scan">立即扫描</button>' : '') +
+    '</div><div id="list"></div>';
+  function load() {
+    GET('/api/risks').then(function (r) {
+      document.getElementById('list').innerHTML = table(
+        ['类型', '标题', '详情', '~评分', '等级', '状态', '操作'], r.data.items, function (x) {
+          var ops = '';
+          if (perm('his.risks.write') && x.status === 'open')
+            ops = '<button class="btn sm ghost" data-res="' + x.id + '">处理</button>';
+          var rt = {'drug_low_stock': '药品低库存', 'drug_expiry': '效期预警', 'dose_over': '剂量超限',
+                    'patient_overdue': '挂号超时'}[x.rtype] || x.rtype;
+          return '<tr><td>' + esc(rt) + '</td><td>' + esc(x.title) + '</td><td>' + esc(x.detail || '') + '</td>' +
+            '<td class="num">' + x.score + '</td><td>' + levelTag(x.grade) + '</td>' +
+            '<td>' + tag(x.status === 'open' ? '未处理' : '已处理', x.status === 'open' ? 'err' : 'ok') + '</td>' +
+            '<td class="ops">' + (ops || '—') + '</td></tr>';
+        });
+      document.getElementById('list').onclick = function (e) {
+        var b = e.target.closest('button'); if (!b || !b.getAttribute('data-res')) return;
+        PUT('/api/risks/' + b.getAttribute('data-res') + '/resolve', {note: '已人工处理'})
+          .then(function () { toast('已处理'); load(); }).catch(function (e2) { toast(e2.message, true); });
+      };
+    });
+  }
+  if (document.getElementById('btn-scan'))
+    document.getElementById('btn-scan').onclick = function () {
+      POST('/api/risks/scan', {}).then(function (r) {
+        toast('扫描完成，新增 ' + r.data.created + ' 条'); load();
+      }).catch(function (e) { toast(e.message, true); });
+    };
+  load();
+};
+
+/* ---------- 系统管理 ---------- */
+PAGES.system = function (main) {
+  main.innerHTML = '<h2>系统管理</h2><div class="grid2">' +
+    '<div class="card"><h3>用户</h3><div id="users">加载中…</div></div>' +
+    '<div class="card"><h3>公告</h3><div id="notices">加载中…</div></div>' +
+    (perm('*') ? '<div class="card"><h3>API Key（对接外部系统）</h3><div id="keys">加载中…</div></div>' +
+      '<div class="card"><h3>增量同步状态</h3><div id="sync">加载中…</div></div>' : '') +
+    '</div>';
+  GET('/api/users').then(function (r) {
+    document.getElementById('users').innerHTML = table(
+      ['用户名', '姓名', '角色'], r.data.items, function (x) {
+        return '<tr><td>' + esc(x.username) + '</td><td>' + esc(x.name || '') + '</td><td>' + esc(x.role) + '</td></tr>';
+      });
+  }).catch(function () { document.getElementById('users').innerHTML = '<div class="empty">无权限</div>'; });
+  GET('/api/notices').then(function (r) {
+    document.getElementById('notices').innerHTML = (r.data.items || []).map(function (n) {
+      return '<p><b>' + esc(n.title) + '</b><br>' + esc(n.content || '') + '</p>';
+    }).join('') || '<div class="empty">暂无</div>';
+  });
+  if (perm('*')) {
+    GET('/api/api-keys').then(function (r) {
+      document.getElementById('keys').innerHTML =
+        '<div class="toolbar"><button class="btn sm" id="btn-key">生成 Key</button></div>' +
+        table(['名称', '前缀', '权限', '最近使用'], r.data.items, function (x) {
+          return '<tr><td>' + esc(x.name) + '</td><td>' + esc(x.prefix || '') + '</td>' +
+            '<td>' + esc(x.perms) + '</td><td>' + esc(x.last_used || '—') + '</td></tr>';
+        });
+      document.getElementById('btn-key').onclick = function () {
+        POST('/api/api-keys', {name: '外部对接-' + Date.now() % 10000}).then(function (r2) {
+          modal('<h3>API Key 已生成（仅显示一次）</h3><p class="key-line">' + esc(r2.data.key) + '</p>' +
+            '<div class="m-foot"><button class="btn" onclick="closeModal()">我已保存</button></div>');
+        });
+      };
+    });
+    GET('/api/sync?since=0&entities=patients').then(function (r) {
+      var d = r.data || {};
+      document.getElementById('sync').innerHTML =
+        '<p>同步版本：<b>' + (d.version || 0) + '</b>，本轮变更 <b>' + (d.changes || []).length + '</b> 条</p>' +
+        '<p>支持实体：patients / doctors / registrations / prescriptions / charges / inventory / risks</p>';
+    });
+  }
+};
+
+</script>
+<script>boot();</script>
+</body>
+</html>
