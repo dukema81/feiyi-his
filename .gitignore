@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+data/
+*.db*
+.pytest_cache/
+reports/
+demo/_snap.db*
+screenshots/
