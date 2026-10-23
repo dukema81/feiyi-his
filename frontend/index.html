@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>飞医医疗管理系统</title>
+<link rel="icon" href="favicon.svg">
+<link rel="stylesheet" href="style.css">
+<script>var PREFIX = (function () {
+    var p = location.pathname.replace(/\/[^/]*$/, '');
+    return (p === '/' || p === '') ? '' : p;
+  })();</script>
+</head>
+<body>
+<div id="sidebar">
+  <div class="brand">飞医</div>
+  <div class="brand-sub">医疗管理系统 v1.0</div>
+  <nav id="nav"></nav>
+  <div class="side-foot">
+    <span id="who">—</span>
+    <button class="btn sm ghost" id="btn-logout">退出</button>
+  </div>
+</div>
+<main id="main"></main>
+<div id="modal-mask" class="modal-mask hidden"><div class="modal" id="modal"></div></div>
+<div id="toast" class="toast hidden"></div>
+<script src="app.js"></script>
+<script src="pages.js"></script>
+<script>boot();</script>
+</body>
+</html>
